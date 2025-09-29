@@ -1,0 +1,6 @@
+[submodule "yt-dlp4vlc"]
+	path = yt-dlp4vlc
+	url = https://github.com/rollo8638/yt-dlp4vlc
+[submodule "vlc-youtubeDL"]
+	path = vlc-youtubeDL
+	url = https://github.com/rollo8638/vlc-youtubeDL
