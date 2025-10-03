@@ -8,11 +8,13 @@ JSON = require "dkjson" -- load additional json routines
 -- Probe function.
 function probe()
     -- Check if the input is a YouTube link
-    if (vlc.access == "http" or vlc.access == "https") and
-    (string.match(vlc.path, "youtube%.com/watch%?v=") or string.match(vlc.path, "youtu%.be")) then
-        -- If true,
+    --if (vlc.access == "http" or vlc.access == "https") and
+    --(string.match(vlc.path, "youtube%.com/watch%?v=") or string.match(vlc.path, "youtu%.be")) then
+    if (vlc.access == "http" or vlc.access == "https") then
+        -- If true, then
         -- Peek into the stream to confirm it's an HTML page
         peeklen = 9
+        s = ""
         while string.len(s) < 9 do
             s = string.lower(string.gsub(vlc.peek(peeklen), "%s", ""))
             peeklen = peeklen + 1
@@ -23,12 +25,21 @@ function probe()
     end
 end
 
+function _get_format_url(format)
+    -- prefer streaming formats
+    if format.manifest_url then
+        return format.manifest_url
+    else
+        return format.url
+    end
+end
+
 -- Parse function.
 function parse()
     local url = vlc.access .. "://" .. vlc.path -- To get full url
 
     -- Function to run yt-dlp and return with file handle
-    local function yt_dlp(cmd)
+    local function run(cmd)
         local file = io.popen(cmd, 'r')
         if file then
             local output = file:read("*a")    -- Attempt to read something to check if command worked
@@ -45,12 +56,13 @@ function parse()
     end
 
     -- Preparing all Commands and Parameters variable needed
-    local hide = 'PowerShell.exe -windowstyle hidden cmd /c &'                                                                  -- Hide the console window
-    local ytdlp = 'yt-dlp.exe'                                                                                                  -- yt-dlp command to get JSON info
-    local para = '-j --flat-playlist --write-subs --write-auto-subs -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]"'  -- Parameters for output
+    local hide = 'PowerShell.exe -windowstyle hidden cmd /c &'      -- Hide the processing console window
+    local ytdlp = 'yt-dlp.exe'                                      -- yt-dlp command to get JSON info
+    -- local para = '-j --flat-playlist --write-subs --write-auto-subs -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]"'  -- Parameters for output
+    local para = '-j --flat-playlist'                        -- Parameters for output
     -- Merge all together
-    local cmd = string.format(
-            '%s -s "%s -f \"%s\" -g %s"',
+    local combo = string.format(
+            "%s %s %s %s",
             hide,
             ytdlp,
             para,
@@ -58,8 +70,10 @@ function parse()
         )
 
     -- Try to get the stream URL using yt-dlp (*youtube-dl is deprecated*)
-    local file = assert(yt_dlp(cmd),
-    "yt-dlp failed to execute. Please ensure yt-dlp is installed and in your system PATH.")
+    local file = run(combo)
+    if not file then
+        error("yt-dlp command failed to execute. Please ensure yt-dlp is installed and accessible in your system PATH.")
+    end
 
 
     local tracks = {}

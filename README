@@ -1,10 +1,5 @@
-forked 2 repo from for reference
-- https://github.com/FalloNero/yt-dlp4vlc
-- https://github.com/mjasny/vlc-youtubeDL
+forked from 2 repo for reference
+- https://github.com/FalloNero/yt-dlp4vlc (for hiding processing window)
+- https://github.com/mjasny/vlc-youtubeDL (and add into this one)
 
-gonna try to make use of what they had there and create and make one for myself.
-
-Basically it is just creating an edited version of vlc's youtube.lua and adding yt-dlp in.
-Installation / Setup instructions are available on their repos
-
-**Not working**
+Installation / Setup instructions of yt-dlp are available on their repos
