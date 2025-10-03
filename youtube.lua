@@ -20,6 +20,7 @@ function probe()
         return s == "<!doctype"
     else
         return false
+    end
 end
 
 -- Parse function.
@@ -27,7 +28,7 @@ function parse()
     local url = vlc.access .. "://" .. vlc.path -- To get full url
 
     -- Function to run yt-dlp and return with file handle
-    local function yt-dlp(cmd)
+    local function yt_dlp(cmd)
         local file = io.popen(cmd, 'r')
         if file then
             local output = file:read("*a")    -- Attempt to read something to check if command worked
@@ -57,7 +58,7 @@ function parse()
         )
 
     -- Try to get the stream URL using yt-dlp (*youtube-dl is deprecated*)
-    local file = assert(yt-dlp(cmd),
+    local file = assert(yt_dlp(cmd),
     "yt-dlp failed to execute. Please ensure yt-dlp is installed and in your system PATH.")
 
 
